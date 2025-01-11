@@ -47,12 +47,12 @@ export const Navigation = () => {
         <SheetTrigger>
           <Button
             variant="outline"
-            className=" font-normal bg-white/10 hover:bg-white/20 hover:text-white border-none focus-visible:ring-offset-0 focus-visible: ring-transparent outline-none text-white focus:bg-white/30"
+            className=" font-normal bg-white/10 hover:bg-white/20 hover:text-white border-none focus-visible:ring-offset-0 focus-visible: ring-transparent outline-none text-green-950 focus:bg-white/30"
           >
             <Menu className=" h-4 w-4 "></Menu>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className=" px-2">
+        <SheetContent side="top" className=" px-2">
           <nav className="flex flex-col gap-y-2 pt-6">
             {routes.map((route) => (
               <Button
