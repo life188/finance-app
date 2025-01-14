@@ -1,6 +1,6 @@
 {
-  "id": "fe295be1-87db-4861-bcc2-cf5d271026ad",
-  "prevId": "7c4e27ca-b0a4-4dad-a78b-d0594b01d878",
+  "id": "bfc97fb4-ce26-48e2-96a7-3e3d366cfd54",
+  "prevId": "e9b3e8f3-8cc2-4d02-91da-5ef9e998c146",
   "version": "5",
   "dialect": "pg",
   "tables": {
@@ -13,6 +13,12 @@
           "type": "text",
           "primaryKey": true,
           "notNull": true
+        },
+        "plaid_i": {
+          "name": "plaid_i",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "name": {
           "name": "name",
