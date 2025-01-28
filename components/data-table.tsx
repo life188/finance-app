@@ -77,17 +77,17 @@ export function DataTable<TData, TValue>({
         />
         {table.getFilteredRowModel().rows.length > 0 && (
           <Button
-            disabled={disabled}
+            disabled={disabled || table.getSelectedRowModel().rows.length === 0}
             size="sm"
             variant="outline"
             className="ml-auto font-normal text-xs"
             onClick={() => {
-              onDelete(table.getFilteredRowModel().rows);
+              onDelete(table.getSelectedRowModel().rows);
               table.resetRowSelection();
             }}
           >
             <Trash className="size-4 mr-2" /> Delete (
-            {table.getFilteredRowModel().rows.length})
+            {table.getSelectedRowModel().rows.length})
           </Button>
         )}
       </div>

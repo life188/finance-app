@@ -22,6 +22,13 @@
       "when": 1736645487472,
       "tag": "0002_dark_shotgun",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1736945913006,
+      "tag": "0003_brave_purple_man",
+      "breakpoints": true
     }
   ]
 }

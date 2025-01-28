@@ -12,8 +12,6 @@ export default function Home() {
       {accountsQuery.data?.map((account) => (
         <div key={account.id}> {account.name}</div>
       ))}
-
-      <Button onClick={onOpen}>Add An Account</Button>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { db } from '@/db/drizzle';
-import { accounts, insertAccountSchema } from '@/db/schema';
+import { categories, insertCategoriesSchema } from '@/db/schema';
 import { clerkMiddleware, getAuth } from '@hono/clerk-auth';
 import { and, eq, inArray } from 'drizzle-orm';
 import { zValidator } from '@hono/zod-validator';
@@ -14,11 +14,11 @@ const app = new Hono()
     }
     const data = await db
       .select({
-        id: accounts.id,
-        name: accounts.name,
+        id: categories.id,
+        name: categories.name,
       })
-      .from(accounts)
-      .where(eq(accounts.userId, auth.userId));
+      .from(categories)
+      .where(eq(categories.userId, auth.userId));
     return c.json({ data });
   })
   .get(
@@ -42,13 +42,12 @@ const app = new Hono()
         return c.json({ error: 'Unauthorized' }, 401);
       }
       const [data] = await db
-        .select({ id: accounts.id, name: accounts.name })
-        .from(accounts)
-        .where(and(eq(accounts.userId, auth.userId), eq(accounts.id, id)));
+        .select({ id: categories.id, name: categories.name })
+        .from(categories)
+        .where(and(eq(categories.userId, auth.userId), eq(categories.id, id)));
       if (!data) {
         return c.json({ error: 'not found' }, 404);
       }
-      return c.json({ data });
     }
   )
   .post(
@@ -56,7 +55,7 @@ const app = new Hono()
     clerkMiddleware(),
     zValidator(
       'json',
-      insertAccountSchema.pick({
+      insertCategoriesSchema.pick({
         name: true,
       })
     ),
@@ -68,7 +67,7 @@ const app = new Hono()
         return c.json({ error: 'Unauthorized' }, 401);
       }
       const [data] = await db
-        .insert(accounts)
+        .insert(categories)
         .values({
           id: createId(),
           userId: auth.userId,
@@ -95,54 +94,16 @@ const app = new Hono()
         return c.json({ error: 'Unauthorized' }, 401);
       }
       const data = await db
-        .delete(accounts)
+        .delete(categories)
         .where(
           and(
-            eq(accounts.userId, auth.userId),
-            inArray(accounts.id, values.ids)
+            eq(categories.userId, auth.userId),
+            inArray(categories.id, values.ids)
           )
         )
         .returning({
-          id: accounts.id,
+          id: categories.id,
         });
-      return c.json({ data });
-    }
-  )
-  .patch(
-    '/:id',
-    clerkMiddleware(),
-    zValidator(
-      'param',
-      z.object({
-        id: z.string().optional(),
-      })
-    ),
-    zValidator(
-      'json',
-      insertAccountSchema.pick({
-        name: true,
-      })
-    ),
-    async (c) => {
-      const auth = getAuth(c);
-      const { id } = c.req.valid('param');
-      const values = c.req.valid('json');
-
-      if (!id) {
-        return c.json({ error: 'Missing id' }, 400);
-      }
-      if (!auth?.userId) {
-        return c.json({ error: 'unauthorized' }, 401);
-      }
-      const [data] = await db
-        .update(accounts)
-        .set(values)
-        .where(and(eq(accounts.userId, auth.userId), eq(accounts.id, id)))
-        .returning();
-
-      if (!data) {
-        return c.json({ error: 'Not found' }, 404);
-      }
       return c.json({ data });
     }
   );
