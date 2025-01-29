@@ -106,6 +106,44 @@ const app = new Hono()
         });
       return c.json({ data });
     }
+  )
+  .patch(
+    '/:id',
+    clerkMiddleware(),
+    zValidator(
+      'param',
+      z.object({
+        id: z.string().optional(),
+      })
+    ),
+    zValidator(
+      'json',
+      insertCategoriesSchema.pick({
+        name: true,
+      })
+    ),
+    async (c) => {
+      const auth = getAuth(c);
+      const { id } = c.req.valid('param');
+      const values = c.req.valid('json');
+
+      if (!id) {
+        return c.json({ error: 'Missing id' }, 400);
+      }
+      if (!auth?.userId) {
+        return c.json({ error: 'unauthorized' }, 401);
+      }
+      const [data] = await db
+        .update(categories)
+        .set(values)
+        .where(and(eq(categories.userId, auth.userId), eq(categories.id, id)))
+        .returning();
+
+      if (!data) {
+        return c.json({ error: 'Not found' }, 404);
+      }
+      return c.json({ data });
+    }
   );
 
 export default app;
