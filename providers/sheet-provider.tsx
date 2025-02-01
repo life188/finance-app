@@ -8,6 +8,8 @@ import { Edit } from 'lucide-react';
 import { NewCategorySheet } from '@/features/categories/components/new-category-sheet';
 import { EditCategorySheet } from '@/features/categories/components/edit-category-sheet';
 
+import { NewTransactionSheet } from '@/features/transactions/components/new-transaction';
+
 export const SheetProvider = () => {
   const isMounted = useMountedState();
 
@@ -19,6 +21,8 @@ export const SheetProvider = () => {
 
       <NewCategorySheet />
       <EditCategorySheet />
+
+      <NewTransactionSheet />
     </>
   );
 };
