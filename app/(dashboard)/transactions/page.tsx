@@ -3,21 +3,54 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-import { Loader2, Plus } from 'lucide-react';
+import { Loader2, Plus, Upload } from 'lucide-react';
 import { columns } from './columns';
 import { DataTable } from '@/components/data-table';
-import { useGetAccounts } from '@/features/accounts/api/use-get-accounts';
+import { useGetTransactions } from '@/features/transactions/api/use-get-transactions';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useBulkDeleteAccounts } from '@/features/accounts/api/use-bulk-delete';
+import { useBulkDeleteTransactions } from '@/features/transactions/api/use-bulk-delete-transactions';
 import { useNewTransaction } from '@/features/transactions/hooks/use-new-transaction';
+import { useState } from 'react';
+import { UploadButton } from './upload-button';
+import { ImportCard } from './import-card';
+import { transactions as transactionSchema } from '@/db/schema';
+
+enum VARIANTS {
+  LIST = 'LIST',
+  IMPORT = 'IMPORT',
+}
+
+const INITIAL_IMPORT_RESULTS = {
+  data: [],
+  errors: [],
+  meta: {},
+};
 
 const TransactionsPage = () => {
+  const [variant, setVariant] = useState<VARIANTS>(VARIANTS.LIST);
+  const [importResults, setImportResults] = useState(INITIAL_IMPORT_RESULTS);
+
+  const onUpload = (results: typeof INITIAL_IMPORT_RESULTS) => {
+    setImportResults(results);
+    setVariant(VARIANTS.IMPORT);
+  };
+  const onCancelImport = () => {
+    setImportResults(INITIAL_IMPORT_RESULTS);
+    setVariant(VARIANTS.LIST);
+  };
+
   const newTransaction = useNewTransaction();
-  const accountsQuery = useGetAccounts();
-  const accounts = accountsQuery.data || [];
-  const deleteAccounts = useBulkDeleteAccounts();
-  const isDisabled = accountsQuery.isLoading || deleteAccounts.isPending;
-  if (accountsQuery.isLoading) {
+  const transactionsQuery = useGetTransactions();
+  const transactions = transactionsQuery.data || [];
+  const deleteTransactions = useBulkDeleteTransactions();
+  const isDisabled =
+    transactionsQuery.isLoading || deleteTransactions.isPending;
+
+  const onSubmitImport = async (
+    values: (typeof transactionSchema.$inferInsert)[]
+  ) => {};
+
+  if (transactionsQuery.isLoading) {
     return (
       <div className="max-w-screen-2xl mx-auto w-full pb-10 -mt-24">
         <Card className=" border-none drop-shadow-sm">
@@ -33,6 +66,17 @@ const TransactionsPage = () => {
       </div>
     );
   }
+  if (variant === VARIANTS.IMPORT) {
+    return (
+      <>
+        <ImportCard
+          data={importResults.data}
+          onCancel={onCancelImport}
+          onSubmit={onSubmitImport}
+        />
+      </>
+    );
+  }
 
   return (
     <div className="max-w-screen-2xl mx-auto w-full pb-10 -mt-24">
@@ -41,19 +85,22 @@ const TransactionsPage = () => {
           <CardTitle className="text-xl line-clamp-1">
             Transaction History
           </CardTitle>
-          <Button onClick={newTransaction.onOpen} size="sm">
-            <Plus className="size-4 mr-2" />
-            Add New
-          </Button>
+          <div className="flex items-center gap-x-2">
+            <Button onClick={newTransaction.onOpen} size="sm">
+              <Plus className="size-4 mr-2" />
+              Add New
+            </Button>
+            <UploadButton onUpload={onUpload} />
+          </div>
         </CardHeader>
         <CardContent>
           <DataTable
             columns={columns}
-            data={accounts}
+            data={transactions}
             filterKey="name"
             onDelete={(row) => {
               const ids = row.map((r) => r.original.id);
-              deleteAccounts.mutate({ ids });
+              deleteTransactions.mutate({ ids });
             }}
             disabled={isDisabled}
           />
