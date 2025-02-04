@@ -57,7 +57,7 @@ export const columns: ColumnDef<ResponseType>[] = [
     },
     cell: ({ row }) => {
       const date = row.getValue('date') as Date;
-      <span>{format(date, 'dd MMMM, YYYY')}</span>;
+      return <span>{format(date, 'dd MMMM, yyyy')}</span>;
     },
   },
   {
@@ -74,7 +74,7 @@ export const columns: ColumnDef<ResponseType>[] = [
       );
     },
     cell: ({ row }) => {
-      <span>{row.original.category}</span>;
+      return <span>{row.original.category}</span>;
     },
   },
   {
@@ -130,10 +130,12 @@ export const columns: ColumnDef<ResponseType>[] = [
       );
     },
     cell: ({ row }) => {
-      <AccountColumn
-        account={row.original.account}
-        accountId={row.original.accountId}
-      />;
+      return (
+        <AccountColumn
+          account={row.original.account}
+          accountId={row.original.accountId}
+        />
+      );
     },
   },
   {
