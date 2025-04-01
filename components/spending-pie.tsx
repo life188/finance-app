@@ -1,4 +1,4 @@
-import { FileSearch, PieChart, Radar, Target } from 'lucide-react';
+import { FileSearch, PieChart } from 'lucide-react';
 import { useState } from 'react';
 import {
   Card,
@@ -17,8 +17,7 @@ import {
   SelectValue,
   SelectItem,
 } from '@/components/ui/select';
-import { StringLiteralUnion } from 'hono/utils/types';
-import { RadarChart, RadialBarChart } from 'recharts';
+
 import { PieVariant } from './pie-variant';
 
 type Props = {
