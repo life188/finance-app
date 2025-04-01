@@ -1,1 +1,4 @@
-Developing a financial budgeting app with plans to roll out innovative features, including an AI chatbot designed to assist users in saving more effectively and optimizing tax savings.
+App Preview 
+
+![image](https://github.com/user-attachments/assets/68db72fb-4fb5-4943-989a-a28e79ad4dd9)
+
